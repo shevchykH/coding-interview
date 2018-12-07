@@ -22,28 +22,30 @@ class A(object):
 a1 = A()
 a2 = A()
 
-assert a1 == a2
+assert id(a1) == id(a2)
+
 
 # Case 2. Using function as decorator
 
-_instance = None
-
 
 def dec1(func):
+    dec1.instace = None
+
     def wrapper(*args, **kwargs):
-        global _instance
-        if not _instance:
-            _instance = func(*args, **kwargs)
-        return _instance
+        if hasattr(dec1, "instance"):
+            return dec1.instance
+        dec1.instance = func(*args, **kwargs)
+        return dec1.instance
     return wrapper
 
 
 @dec1
-class B(object):
+class B(list):
     pass
 
 
 b1 = B()
 b2 = B()
+b2.append(1)
 
-assert b1 == b2
+assert id(b1) == id(b2)
