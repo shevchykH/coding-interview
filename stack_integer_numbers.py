@@ -5,17 +5,28 @@ class StackIntNumbers(object):
 
     def __init__(self):
         self.stack = []
+        self.track_stack = []
         self._max = None
 
-    def push(self, number):
+    def push(self, element):
         if self._max is None:
-            self._max = number
-        elif self._max < number:
-            self._max = number
-        self.stack.append(number)
+            self._max = element
+            self.stack.append(element)
+            self.track_stack.append(element)
+
+        elif self._max < element:
+            self._max = element
+            self.stack.append(element)
+            self.track_stack.append(element)
+        else:
+            self.stack.append(element)
 
     def pop(self):
-        return self.stack.pop()
+        element = self.stack.pop()
+        if element == self._max:
+            self.track_stack.pop()
+            self._max = self.max()
+        return element
 
     def top(self):
         if not self.emtpy():
@@ -25,15 +36,23 @@ class StackIntNumbers(object):
         return self.stack == []
 
     def max(self):
-        return self._max
+        if self.track_stack:
+            return self.track_stack[-1]
 
 
 stack = StackIntNumbers()
 stack.push(3)
 stack.push(10)
+stack.push(12)
+stack.push(1)
+stack.pop()
+stack.pop()
+stack.push(12)
 stack.push(1)
 
-assert stack.max() == 10
+
+assert stack.max() == 12
 assert stack.pop() == 1
-assert stack.top() == 10
+assert stack.pop() == 12
+assert stack.max() == 10
 assert not stack.emtpy()
